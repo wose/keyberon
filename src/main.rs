@@ -61,7 +61,7 @@ const APP: () = {
     static mut USB_DEV: UsbDevice<'static, UsbBusType> = ();
     static mut USB_CLASS: KeyboardHidClass = ();
     static mut MATRIX: Matrix<matrix::Cols, matrix::Rows> = ();
-    static mut DEBOUNCER: Debouncer<PressedKeys<matrix::U5, matrix::U12>> = ();
+    static mut DEBOUNCER: Debouncer<PressedKeys<matrix::U5, matrix::U15>> = ();
     static mut LAYOUT: layout::Layout = layout::Layout::new(layout::LAYERS);
     static mut TIMER: timer::Timer<stm32::TIM3> = ();
 
@@ -122,6 +122,9 @@ const APP: () = {
                 gpiob.pb7.into_pull_up_input(&mut gpiob.crl),
                 gpiob.pb8.into_pull_up_input(&mut gpiob.crh),
                 gpiob.pb9.into_pull_up_input(&mut gpiob.crh),
+                gpioa.pa6.into_pull_up_input(&mut gpioa.crl),
+                gpioa.pa5.into_pull_up_input(&mut gpioa.crl),
+                gpioa.pa4.into_pull_up_input(&mut gpioa.crl),
             ),
             matrix::Rows(
                 gpiob.pb11.into_push_pull_output(&mut gpiob.crh),

@@ -1,5 +1,5 @@
 use core::borrow::{Borrow, BorrowMut};
-pub use generic_array::typenum::{U12, U5};
+pub use generic_array::typenum::{U15, U5};
 use generic_array::{arr, ArrayLength, GenericArray};
 use stm32f1xx_hal::gpio::{gpioa::*, gpiob::*, Input, Output, PullUp, PushPull};
 use stm32f1xx_hal::prelude::*;
@@ -76,12 +76,15 @@ pub struct Cols(
     pub PB7<Input<PullUp>>,
     pub PB8<Input<PullUp>>,
     pub PB9<Input<PullUp>>,
+    pub PA6<Input<PullUp>>,
+    pub PA5<Input<PullUp>>,
+    pub PA4<Input<PullUp>>,
 );
 impl_getter! {
     Cols,
     dyn _embedded_hal_digital_InputPin,
-    U12,
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    U15,
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 }
 
 pub struct Rows(
