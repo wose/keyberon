@@ -4,30 +4,6 @@
 
 extern crate panic_semihosting;
 
-#[allow(unused)]
-macro_rules! dbg {
-    ($val:expr) => {
-        // Use of `match` here is intentional because it affects the lifetimes
-        // of temporaries - https://stackoverflow.com/a/48732525/1063961
-        match $val {
-            tmp => {
-                use core::fmt::Write;
-                let mut out = cortex_m_semihosting::hio::hstdout().unwrap();
-                writeln!(
-                    out,
-                    "[{}:{}] {} = {:#?}",
-                    file!(),
-                    line!(),
-                    stringify!($val),
-                    &tmp
-                )
-                .unwrap();
-                tmp
-            }
-        }
-    };
-}
-
 pub mod action;
 pub mod debounce;
 pub mod hid;
@@ -47,6 +23,7 @@ use stm32f1xx_hal::{gpio, timer};
 use usb_device::bus;
 use usb_device::class::UsbClass;
 use usb_device::prelude::*;
+use embedded_hal::digital::v2::OutputPin;
 
 type KeyboardHidClass = hid::HidClass<'static, UsbBusType, Keyboard>;
 type Led = gpio::gpioc::PC13<gpio::Output<gpio::PushPull>>;
@@ -84,16 +61,10 @@ const APP: () = {
         let mut gpioc = device.GPIOC.split(&mut rcc.apb2);
 
         let mut led = gpioc.pc13.into_push_pull_output(&mut gpioc.crh);
-        led.set_high();
-
-        // BluePill board has a pull-up resistor on the D+ line.
-        // Pull the D+ pin down to send a RESET condition to the USB bus.
-        let mut usb_dp = gpioa.pa12.into_push_pull_output(&mut gpioa.crh);
-        usb_dp.set_low();
-        cortex_m::asm::delay(clocks.sysclk().0 / 100);
+        led.set_high().unwrap();
 
         let usb_dm = gpioa.pa11;
-        let usb_dp = usb_dp.into_floating_input(&mut gpioa.crh);
+        let usb_dp = gpioa.pa12.into_floating_input(&mut gpioa.crh);
 
         *USB_BUS = Some(UsbBus::new(device.USB, (usb_dm, usb_dp)));
         let usb_bus = USB_BUS.as_ref().unwrap();
