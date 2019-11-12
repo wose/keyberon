@@ -1,8 +1,8 @@
 use core::borrow::{Borrow, BorrowMut};
+use embedded_hal::digital::v2::{InputPin, OutputPin};
 pub use generic_array::typenum::{U15, U5};
 use generic_array::{arr, ArrayLength, GenericArray};
 use stm32f1xx_hal::gpio::{gpioa::*, gpiob::*, Input, Output, PullUp, PushPull};
-use embedded_hal::digital::v2::{InputPin, OutputPin};
 use void::Void;
 
 pub trait DynGetter<'a> {
@@ -118,7 +118,8 @@ where
     R::DynMutRef: BorrowMut<dyn OutputPin<Error = Void> + 'a>,
 {
     pub fn clear(&'a mut self) {
-        self.rows.map_mut(|mut c| c.borrow_mut().set_high().unwrap());
+        self.rows
+            .map_mut(|mut c| c.borrow_mut().set_high().unwrap());
     }
 }
 impl<'a, C, R> Matrix<C, R>
