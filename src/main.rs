@@ -30,8 +30,20 @@ use usb_device::class::UsbClass;
 use usb_device::prelude::*;
 use void::Void;
 
-type KeyboardHidClass = hid::HidClass<'static, UsbBusType, Keyboard>;
-type Led = gpio::gpioc::PC13<gpio::Output<gpio::PushPull>>;
+type KeyboardHidClass = hid::HidClass<'static, UsbBusType, Keyboard<Leds>>;
+
+pub struct Leds {
+    caps_lock: gpio::gpioc::PC13<gpio::Output<gpio::PushPull>>,
+}
+impl keyboard::Leds for Leds {
+    fn caps_lock(&mut self, status: bool) {
+        if status {
+            self.caps_lock.set_low().unwrap()
+        } else {
+            self.caps_lock.set_high().unwrap()
+        }
+    }
+}
 
 pub struct Cols(
     pub PB12<Input<PullUp>>,
@@ -126,6 +138,7 @@ const APP: () = {
 
         let mut led = gpioc.pc13.into_push_pull_output(&mut gpioc.crh);
         led.set_high().unwrap();
+        let leds = Leds { caps_lock: led };
 
         let usb_dm = gpioa.pa11;
         let usb_dp = gpioa.pa12.into_floating_input(&mut gpioa.crh);
@@ -133,7 +146,7 @@ const APP: () = {
         *USB_BUS = Some(UsbBus::new(device.USB, (usb_dm, usb_dp)));
         let usb_bus = USB_BUS.as_ref().unwrap();
 
-        let usb_class = hid::HidClass::new(Keyboard::new(led), &usb_bus);
+        let usb_class = hid::HidClass::new(Keyboard::new(leds), &usb_bus);
         let usb_dev = UsbDeviceBuilder::new(usb_bus, UsbVidPid(VID, PID))
             .manufacturer("RIIR Task Force")
             .product("Keyberon")
