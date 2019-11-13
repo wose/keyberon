@@ -11,7 +11,10 @@ pub mod keyboard;
 pub mod layout;
 pub mod matrix;
 
+use crate::action::Action::{self, *};
+use crate::action::{d, k, l, m};
 use crate::debounce::Debouncer;
+use crate::key_code::KeyCode::*;
 use crate::keyboard::Keyboard;
 use crate::matrix::{Matrix, PressedKeys};
 use embedded_hal::digital::v2::{InputPin, OutputPin};
@@ -68,6 +71,27 @@ impl_getter! {
     [0, 1, 2, 3, 4]
 }
 
+const CUT: Action = m(&[LShift, Delete]);
+const COPY: Action = m(&[LCtrl, Insert]);
+const PASTE: Action = m(&[LShift, Insert]);
+
+#[rustfmt::skip]
+pub static LAYERS: layout::Layers = &[
+    &[
+        &[k(Grave),   k(Kb1),k(Kb2),k(Kb3), k(Kb4),  k(Kb5),k(KpMinus),k(KpSlash),k(KpAsterisk),k(Kb6),   k(Kb7),  k(Kb8), k(Kb9),  k(Kb0),   k(Minus)   ],
+        &[k(Tab),     k(Q),  k(W),  k(E),   k(R),    k(T),     k(Kp7), k(Kp8),    k(Kp9),       k(Y),     k(U),    k(I),   k(O),    k(P),     k(LBracket)],
+        &[k(RBracket),k(A),  k(S),  k(D),   k(F),    k(G),     k(Kp4), k(Kp5),    k(Kp6),       k(H),     k(J),    k(K),   k(L),    k(SColon),k(Quote)   ],
+        &[k(Equal),   k(Z),  k(X),  k(C),   k(V),    k(B),     k(Kp1), k(Kp2),    k(Kp3),       k(N),     k(M),    k(Comma),k(Dot), k(Slash), k(Bslash)  ],
+        &[k(LCtrl),   l(1), k(LGui),k(LAlt),k(Space),k(LShift),k(Kp0), k(KpDot),  k(KpEnter),   k(RShift),k(Enter),k(RAlt),k(BSpace),k(Escape),k(RCtrl)  ],
+    ], &[
+        &[k(F1),      k(F2),    k(F3),     k(F4),k(F5),k(F6),Trans,Trans,Trans,k(F7),k(F8),  k(F9),  k(F10), k(F11),  k(F12)   ],
+        &[k(Escape),  Trans,    Trans,     Trans,Trans,Trans,Trans,Trans,Trans,Trans,Trans,  Trans,  Trans,  Trans,   k(PgUp)  ],
+        &[d(0),       d(1),     k(NumLock),Trans,Trans,Trans,Trans,Trans,Trans,Trans,k(Left),k(Down),k(Up),  k(Right),k(PgDown)],
+        &[k(CapsLock),k(Delete),CUT,       COPY, PASTE,Trans,Trans,Trans,Trans,Trans,Trans,  Trans,  k(Home),k(Up),   k(End)   ],
+        &[Trans,      Trans,    Trans,     Trans,Trans,Trans,Trans,Trans,Trans,Trans,Trans,  Trans,  k(Left),k(Down), k(Right) ],
+    ]
+];
+
 // Generic keyboard from
 // https://github.com/obdev/v-usb/blob/master/usbdrv/USB-IDs-for-free.txt
 const VID: u16 = 0x27db;
@@ -79,7 +103,7 @@ const APP: () = {
     static mut USB_CLASS: KeyboardHidClass = ();
     static mut MATRIX: Matrix<Cols, Rows> = ();
     static mut DEBOUNCER: Debouncer<PressedKeys<U5, U15>> = ();
-    static mut LAYOUT: layout::Layout = layout::Layout::new(layout::LAYERS);
+    static mut LAYOUT: layout::Layout = layout::Layout::new(LAYERS);
     static mut TIMER: timer::Timer<stm32::TIM3> = ();
 
     #[init]
