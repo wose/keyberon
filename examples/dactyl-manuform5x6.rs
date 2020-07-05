@@ -44,12 +44,12 @@ pub struct Cols(
     pub PB15<Input<PullUp>>,
     pub PA8<Input<PullUp>>,
     pub PA9<Input<PullUp>>,
-    pub PA10<Input<PullUp>>,
-    pub PB5<Input<PullUp>>,
-    pub PB6<Input<PullUp>>,
-    pub PB7<Input<PullUp>>,
-    pub PB8<Input<PullUp>>,
-    pub PB9<Input<PullUp>>,
+    pub PA0<Input<PullUp>>,
+    pub PA1<Input<PullUp>>,
+    pub PA2<Input<PullUp>>,
+    pub PA3<Input<PullUp>>,
+    pub PA4<Input<PullUp>>,
+    pub PA5<Input<PullUp>>,
 );
 impl_heterogenous_array! {
     Cols,
@@ -73,65 +73,101 @@ impl_heterogenous_array! {
     [0, 1, 2, 3, 4, 5]
 }
 
-const CUT: Action = m(&[LShift, Delete]);
-const COPY: Action = m(&[LCtrl, Insert]);
-const PASTE: Action = m(&[LShift, Insert]);
-const C_ENTER: Action = HoldTap {
-    timeout: 200,
-    hold: &k(LCtrl),
-    tap: &k(Enter),
-};
-const L1_SP: Action = HoldTap {
+// layer keys
+const L1_SPACE: Action = HoldTap {
     timeout: 200,
     hold: &l(1),
     tap: &k(Space),
 };
-const CENTER: Action = m(&[LCtrl, Enter]);
 
-#[rustfmt::skip]
-pub static LAYERS2: keyberon::layout::Layers = &[
-    &[
-        &[k(Grave),   k(Kb1),k(Kb2),k(Kb3), k(Kb4),k(Kb5),   k(Kb6),   k(Kb7), k(Kb8), k(Kb9),  k(Kb0),   k(Minus)   ],
-        &[k(Tab),     k(Q),  k(W),  k(E),   k(R),  k(T),     k(Y),     k(U),   k(I),   k(O),    k(P),     k(LBracket)],
-        &[k(RBracket),k(A),  k(S),  k(D),   k(F),  k(G),     k(H),     k(J),   k(K),   k(L),    k(SColon),k(Quote)   ],
-        &[k(Equal),   k(Z),  k(X),  k(C),   k(V),  k(B),     k(N),     k(M),   k(Comma),k(Dot), k(Slash), k(Bslash)  ],
-        &[Trans,      Trans, k(LGui),k(LAlt),L1_SP,k(LShift),k(RShift),C_ENTER,k(RAlt),k(BSpace),Trans,   Trans      ],
-        &[Trans,      Trans, k(LGui),k(LAlt),L1_SP,k(LShift),k(RShift),C_ENTER,k(RAlt),k(BSpace),Trans,   Trans      ],
-    ], &[
-        &[k(F1),k(F2),k(F3),     k(F4),k(F5),    k(F6),k(F7),      k(F8),  k(F9),    k(F10), k(F11),  k(F12)],
-        &[Trans,Trans,Trans,     Trans,Trans,    Trans,Trans,      Trans,  k(Delete),Trans,  Trans,   Trans ],
-        &[d(0), d(1), k(NumLock),Trans,k(Escape),Trans,k(CapsLock),k(Left),k(Down),  k(Up),  k(Right),Trans ],
-        &[Trans,Trans,CUT,       COPY, PASTE,    Trans,Trans,      k(Home),k(PgDown),k(PgUp),k(End),  Trans ],
-        &[Trans,Trans,Trans,     Trans,Trans,    Trans,Trans,      CENTER, Trans,    Trans,  Trans,   Trans ],
-        &[Trans,Trans,Trans,     Trans,Trans,    Trans,Trans,      CENTER, Trans,    Trans,  Trans,   Trans ],
-    ],
-];
+const L2_ENTER: Action = HoldTap {
+    timeout: 200,
+    hold: &l(2),
+    tap: &k(Enter),
+};
+
+const CTRL_ESCAPE: Action = HoldTap {
+    timeout: 200,
+    hold: &k(LCtrl),
+    tap: &k(Escape),
+};
+
+const GUI_INSERT: Action = HoldTap {
+    timeout: 200,
+    hold: &k(LGui),
+    tap: &k(Insert),
+};
+
+const ALTGR_DELETE: Action = HoldTap {
+    timeout: 200,
+    hold: &k(RAlt),
+    tap: &k(Delete),
+};
+
+// shifted symbols
+const TILD: Action = m(&[LShift, NonUsHash]);
+const EXLM: Action = m(&[LShift, Kb1]);
+const AT: Action = m(&[LShift, Kb2]);
+const HASH: Action = m(&[LShift, Kb3]);
+const DLR: Action = m(&[LShift, Kb4]);
+const PERC: Action = m(&[LShift, Kb5]);
+const CIRC: Action = m(&[LShift, Kb6]);
+const AMPR: Action = m(&[LShift, Kb7]);
+const ASTR: Action = m(&[LShift, Kb8]);
+const LPRN: Action = m(&[LShift, Kb9]);
+const RPRN: Action = m(&[LShift, Kb0]);
+const UNDS: Action = m(&[LShift, Minus]);
+const PLUS: Action = m(&[LShift, Equal]);
+const LCBR: Action = m(&[LShift, LBracket]);
+const RCBR: Action = m(&[LShift, RBracket]);
+const LT: Action = m(&[LShift, Comma]);
+const GT: Action = m(&[LShift, Dot]);
+const COLN: Action = m(&[LShift, SColon]);
+const PIPE: Action = m(&[LShift, Bslash]);
+const QUES: Action = m(&[LShift, Slash]);
+const DQUO: Action = m(&[LShift, Quote]);
 
 #[rustfmt::skip]
 pub static LAYERS: keyberon::layout::Layers = &[
     &[
-        &[k(),  k(),  k(), k(), k(),      k(),           k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(),      k(),           k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(),      k(),           k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(),      k(),           k(), k(), k(), k(), k(),  k()],
-        &[NoOp, NoOp, k(), k(), k(Space), k(Enter),      k(), k(), k(), k(), NoOp, NoOp],
-        &[NoOp, NoOp, k(), k(), k(),      k(),           k(), k(), k(), k(), NoOp, NoOp],
+        &[k(Escape), k(Kb1), k(Kb2),    k(Kb3),   k(Kb4),      k(Kb5),          k(Kb6),    k(Kb7),     k(Kb8),  k(Kb9),      k(Kb0),   k(BSpace)],
+        &[k(Minus),  k(B),   k(U),      k(Dot),   k(Comma),    EXLM,            k(P),      k(C),       k(L),    k(M),        k(F),     k(X)],
+        &[k(Tab),    k(H),   k(I),      k(E),     k(A),        k(O),            k(D),      k(T),       k(R),    k(N),        k(S),     COLN],
+        &[k(LShift), k(K),   k(Y),      k(Slash), AT,          k(Q),            k(J),      k(G),       k(W),    k(V),        k(Z),     k(RShift)],
+        &[NoOp,      NoOp,   k(Left),   k(Up),    CTRL_ESCAPE, L1_SPACE,        L2_ENTER,  GUI_INSERT, k(Down), k(Right),    NoOp,     NoOp],
+        &[NoOp,      NoOp,   k(PgUp),   l(3),     k(Home),     k(LAlt),         k(RAlt),   k(End),     l(4),    k(PgDown), NoOp,     NoOp],
     ],
     &[
-        &[k(),  k(),  k(), k(), k(), k(),      k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(), k(),      k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(), k(),      k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(), k(),      k(), k(), k(), k(), k(),  k()],
-        &[NoOp, NoOp, k(), k(), k(), k(),      k(), k(), k(), k(), NoOp, NoOp],
-        &[NoOp, NoOp, k(), k(), k(), k(),      k(), k(), k(), k(), NoOp, NoOp],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[NoOp,  NoOp,  Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, NoOp,  NoOp],
+        &[NoOp,  NoOp,  Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, NoOp,  NoOp],
     ],
     &[
-        &[k(),  k(),  k(), k(), k(), k(),      k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(), k(),      k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(), k(),      k(), k(), k(), k(), k(),  k()],
-        &[k(),  k(),  k(), k(), k(), k(),      k(), k(), k(), k(), k(),  k()],
-        &[NoOp, NoOp, k(), k(), k(), k(),      k(), k(), k(), k(), NoOp, NoOp],
-        &[NoOp, NoOp, k(), k(), k(), k(),      k(), k(), k(), k(), NoOp, NoOp],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[NoOp,  NoOp,  Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, NoOp,  NoOp],
+        &[NoOp,  NoOp,  Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, NoOp,  NoOp],
+    ],
+    &[
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[NoOp,  NoOp,  Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, NoOp,  NoOp],
+        &[NoOp,  NoOp,  Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, NoOp,  NoOp],
+    ],
+    &[
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[Trans, Trans, Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, Trans, Trans],
+        &[NoOp,  NoOp,  Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, NoOp,  NoOp],
+        &[NoOp,  NoOp,  Trans, Trans, Trans, Trans,        Trans, Trans, Trans, Trans, NoOp,  NoOp],
     ],
 ];
 
@@ -195,12 +231,13 @@ const APP: () = {
                 gpiob.pb15.into_pull_up_input(&mut gpiob.crh),
                 gpioa.pa8.into_pull_up_input(&mut gpioa.crh),
                 gpioa.pa9.into_pull_up_input(&mut gpioa.crh),
-                gpioa.pa10.into_pull_up_input(&mut gpioa.crh),
-                gpiob.pb5.into_pull_up_input(&mut gpiob.crl),
-                gpiob.pb6.into_pull_up_input(&mut gpiob.crl),
-                gpiob.pb7.into_pull_up_input(&mut gpiob.crl),
-                gpiob.pb8.into_pull_up_input(&mut gpiob.crh),
-                gpiob.pb9.into_pull_up_input(&mut gpiob.crh),
+
+                gpioa.pa0.into_pull_up_input(&mut gpioa.crl),
+                gpioa.pa1.into_pull_up_input(&mut gpioa.crl),
+                gpioa.pa2.into_pull_up_input(&mut gpioa.crl),
+                gpioa.pa3.into_pull_up_input(&mut gpioa.crl),
+                gpioa.pa4.into_pull_up_input(&mut gpioa.crl),
+                gpioa.pa5.into_pull_up_input(&mut gpioa.crl),
             ),
             Rows(
                 gpiob.pb11.into_push_pull_output(&mut gpiob.crh),
